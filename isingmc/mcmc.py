@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 from tqdm import trange
 
-from typing import List
+from typing import List, Optional
 
 
 class StateTransfer(metaclass=ABCMeta):
@@ -45,3 +45,20 @@ class MCMCSampler:
                 self.state.transfer()
             observable.append(self.state.observable())
         return observable
+
+    def error_binning(self, sample: List[float], max_level: Optional[int] = None) -> np.ndarray:
+        if max_level is None:
+            max_level = len(sample)
+
+        binned_sample = np.array(sample)
+        error = []
+        l = 0
+        while binned_sample.shape[0] >= 2 and l < max_level:
+            error.append(np.std(binned_sample))
+            if binned_sample.shape[0] % 2:
+                odd_samples = binned_sample[:-1:2]
+            else:
+                odd_samples = binned_sample[::2]
+            binned_sample = (odd_samples + binned_sample[1::2]) / 2
+            l += 1
+        return error
