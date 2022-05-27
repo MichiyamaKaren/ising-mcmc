@@ -46,7 +46,7 @@ class MCMCSampler:
             observable.append(self.state.observable())
         return observable
 
-    def error_binning(self, sample: List[float], max_level: Optional[int] = None) -> np.ndarray:
+    def error_binning(self, sample: List[float], max_level: Optional[int] = None) -> List[float]:
         if max_level is None:
             max_level = len(sample)
 
